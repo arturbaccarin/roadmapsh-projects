@@ -35,9 +35,11 @@ func (t Tasks) ListByStatus(status status) {
 }
 
 type Task struct {
-	Title  string
-	Body   string
-	Status status
+	ID          int
+	Description string
+	Status      status
+	createdAt   string
+	updatedAt   string
 }
 
 func (t Task) String() string {
