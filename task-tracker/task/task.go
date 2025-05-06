@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type status string
 
@@ -10,14 +13,26 @@ const (
 	Done       status = "done"
 )
 
-type Tasks map[string]Task
+type Tasks map[int]Task
 
 func (t Tasks) Add(task *Task) {
-	t[task.Title] = *task
+	task.ID = len(t) + 1
+	task.CreatedAt = time.Now().String()
+
+	t[task.ID] = *task
 }
 
-func (t Tasks) Remove(title string) {
-	delete(t, title)
+func (t Tasks) Update(id int, description string) {
+	task := t[id]
+
+	task.Description = description
+	task.UpdatedAt = time.Now().String()
+
+	t[id] = task
+}
+
+func (t Tasks) Remove(id int) {
+	delete(t, id)
 }
 
 func (t Tasks) ListAll() {
@@ -38,19 +53,18 @@ type Task struct {
 	ID          int
 	Description string
 	Status      status
-	createdAt   string
-	updatedAt   string
+	CreatedAt   string
+	UpdatedAt   string
 }
 
 func (t Task) String() string {
-	return fmt.Sprintf("Title: %s\nBody: %s\nStatus: %s\n", t.Title, t.Body, t.Status)
+	return fmt.Sprintf("ID: %d\nDescription: %s\nStatus: %s\n", t.ID, t.Description, t.Status)
 }
 
-func NewTask(title, body string) Task {
+func NewTask(description string) Task {
 	return Task{
-		Title:  title,
-		Body:   body,
-		Status: Open,
+		Description: description,
+		Status:      Open,
 	}
 }
 
