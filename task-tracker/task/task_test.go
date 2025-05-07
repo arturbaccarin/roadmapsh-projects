@@ -53,3 +53,16 @@ func TestUpdate(t *testing.T) {
 		t.Error("expected error, got nil")
 	}
 }
+
+func TestRemove(t *testing.T) {
+	task := NewTask("Buy groceries")
+
+	tasks := Tasks{}
+	tasks.Add(&task)
+
+	tasks.Remove(1)
+
+	if len(tasks) != 0 {
+		t.Errorf("expected 0 tasks, got %d", len(tasks))
+	}
+}
