@@ -1,4 +1,4 @@
-package main
+package task
 
 import (
 	"fmt"
@@ -22,13 +22,18 @@ func (t Tasks) Add(task *Task) {
 	t[task.ID] = *task
 }
 
-func (t Tasks) Update(id int, description string) {
-	task := t[id]
+func (t Tasks) Update(id int, description string) error {
+	task, ok := t[id]
+	if !ok {
+		return fmt.Errorf("task with ID %d not found", id)
+	}
 
 	task.Description = description
 	task.UpdatedAt = time.Now().String()
 
 	t[id] = task
+
+	return nil
 }
 
 func (t Tasks) Remove(id int) {
