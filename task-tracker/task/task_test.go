@@ -1,6 +1,9 @@
 package task
 
 import (
+	"bytes"
+	"io"
+	"os"
 	"testing"
 )
 
@@ -64,5 +67,41 @@ func TestRemove(t *testing.T) {
 
 	if len(tasks) != 0 {
 		t.Errorf("expected 0 tasks, got %d", len(tasks))
+	}
+}
+
+func TestListAll(t *testing.T) {
+	task1 := Task{
+		ID:          1,
+		Description: "Tarefa 1",
+		Status:      Open,
+	}
+
+	task2 := Task{
+		ID:          2,
+		Description: "Tarefa 2",
+		Status:      InProgress,
+	}
+
+	tasks := Tasks{
+		1: task1,
+		2: task2,
+	}
+
+	r, w, _ := os.Pipe()
+	stdout := os.Stdout
+	os.Stdout = w
+
+	tasks.ListAll()
+
+	w.Close()
+	os.Stdout = stdout
+
+	var buf bytes.Buffer
+	io.Copy(&buf, r)
+
+	expected := "ID: 1\nDescription: Tarefa 1\nStatus: open\n\nID: 2\nDescription: Tarefa 2\nStatus: in_progress\n\n"
+	if buf.String() != expected {
+		t.Errorf("esperado:\n%s\nencontrado:\n%s", expected, buf.String())
 	}
 }
