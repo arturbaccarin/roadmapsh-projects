@@ -105,3 +105,46 @@ func TestListAll(t *testing.T) {
 		t.Errorf("esperado:\n%s\nencontrado:\n%s", expected, buf.String())
 	}
 }
+
+func TestListByStatus(t *testing.T) {
+	task1 := Task{
+		ID:          1,
+		Description: "Tarefa 1",
+		Status:      Open,
+	}
+
+	task2 := Task{
+		ID:          2,
+		Description: "Tarefa 2",
+		Status:      InProgress,
+	}
+
+	task3 := Task{
+		ID:          3,
+		Description: "Tarefa 3",
+		Status:      Open,
+	}
+
+	tasks := Tasks{
+		1: task1,
+		2: task2,
+		3: task3,
+	}
+
+	r, w, _ := os.Pipe()
+	stdout := os.Stdout
+	os.Stdout = w
+
+	tasks.ListByStatus(Open)
+
+	w.Close()
+	os.Stdout = stdout
+
+	var buf bytes.Buffer
+	io.Copy(&buf, r)
+
+	expected := "ID: 1\nDescription: Tarefa 1\nStatus: open\n\nID: 3\nDescription: Tarefa 3\nStatus: open\n\n"
+	if buf.String() != expected {
+		t.Errorf("esperado:\n%s\nencontrado:\n%s", expected, buf.String())
+	}
+}
