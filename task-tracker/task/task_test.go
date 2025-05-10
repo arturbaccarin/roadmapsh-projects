@@ -73,13 +73,13 @@ func TestRemove(t *testing.T) {
 func TestListAll(t *testing.T) {
 	task1 := Task{
 		ID:          1,
-		Description: "Tarefa 1",
+		Description: "Task 1",
 		Status:      Open,
 	}
 
 	task2 := Task{
 		ID:          2,
-		Description: "Tarefa 2",
+		Description: "Task 2",
 		Status:      InProgress,
 	}
 
@@ -100,28 +100,28 @@ func TestListAll(t *testing.T) {
 	var buf bytes.Buffer
 	io.Copy(&buf, r)
 
-	expected := "ID: 1\nDescription: Tarefa 1\nStatus: open\n\nID: 2\nDescription: Tarefa 2\nStatus: in_progress\n\n"
+	expected := "ID: 1\nDescription: Task 1\nStatus: open\n\nID: 2\nDescription: Task 2\nStatus: in_progress\n\n"
 	if buf.String() != expected {
-		t.Errorf("esperado:\n%s\nencontrado:\n%s", expected, buf.String())
+		t.Errorf("expected: \n%s\ngot:\n%s", expected, buf.String())
 	}
 }
 
 func TestListByStatus(t *testing.T) {
 	task1 := Task{
 		ID:          1,
-		Description: "Tarefa 1",
+		Description: "Task 1",
 		Status:      Open,
 	}
 
 	task2 := Task{
 		ID:          2,
-		Description: "Tarefa 2",
+		Description: "Task 2",
 		Status:      InProgress,
 	}
 
 	task3 := Task{
 		ID:          3,
-		Description: "Tarefa 3",
+		Description: "Task 3",
 		Status:      Open,
 	}
 
@@ -143,8 +143,21 @@ func TestListByStatus(t *testing.T) {
 	var buf bytes.Buffer
 	io.Copy(&buf, r)
 
-	expected := "ID: 1\nDescription: Tarefa 1\nStatus: open\n\nID: 3\nDescription: Tarefa 3\nStatus: open\n\n"
+	expected := "ID: 1\nDescription: Task 1\nStatus: open\n\nID: 3\nDescription: Task 3\nStatus: open\n\n"
 	if buf.String() != expected {
-		t.Errorf("esperado:\n%s\nencontrado:\n%s", expected, buf.String())
+		t.Errorf("expected: \n%s\ngot:\n%s", expected, buf.String())
+	}
+}
+
+func TestStringI(t *testing.T) {
+	task := Task{
+		ID:          1,
+		Description: "Task 1",
+		Status:      Open,
+	}
+
+	expected := "ID: 1\nDescription: Task 1\nStatus: open\n"
+	if task.String() != expected {
+		t.Errorf("expected %s, got %s", expected, task.String())
 	}
 }
