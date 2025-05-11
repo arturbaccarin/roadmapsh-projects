@@ -149,7 +149,7 @@ func TestListByStatus(t *testing.T) {
 	}
 }
 
-func TestStringI(t *testing.T) {
+func TestString(t *testing.T) {
 	task := Task{
 		ID:          1,
 		Description: "Task 1",
@@ -159,5 +159,28 @@ func TestStringI(t *testing.T) {
 	expected := "ID: 1\nDescription: Task 1\nStatus: open\n"
 	if task.String() != expected {
 		t.Errorf("expected %s, got %s", expected, task.String())
+	}
+}
+
+func TestChangeStatus(t *testing.T) {
+	task := Task{
+		ID:          1,
+		Description: "Task 1",
+		Status:      Open,
+	}
+
+	task.MarkAsDone()
+	if task.Status != Done {
+		t.Errorf("expected Done, got %s", task.Status)
+	}
+
+	task.MarkAsInProgress()
+	if task.Status != InProgress {
+		t.Errorf("expected InProgress, got %s", task.Status)
+	}
+
+	task.MarkAsOpen()
+	if task.Status != Open {
+		t.Errorf("expected Open, got %s", task.Status)
 	}
 }
