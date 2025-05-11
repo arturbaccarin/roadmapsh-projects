@@ -184,3 +184,83 @@ func TestChangeStatus(t *testing.T) {
 		t.Errorf("expected Open, got %s", task.Status)
 	}
 }
+
+func TestLoadFromJSONFile(t *testing.T) {
+	tests := []struct {
+		name      string
+		file      string
+		wantError bool
+		wantTasks int
+	}{
+		{
+			name:      "Valid JSON",
+			file:      "valid_tasks.json", // This file should contain valid JSON
+			wantError: false,
+			wantTasks: 2, // Based on the number of tasks in valid_tasks.json
+		},
+		{
+			name:      "File Not Found",
+			file:      "nonexistent_file.json",
+			wantError: true,
+			wantTasks: 0,
+		},
+		{
+			name:      "Invalid JSON",
+			file:      "invalid_json.json", // This should contain malformed JSON
+			wantError: true,
+			wantTasks: 0,
+		},
+		{
+			name:      "Empty File",
+			file:      "empty_file.json", // Empty or empty array in JSON
+			wantError: false,
+			wantTasks: 0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Create a Tasks instance
+			tasks := Tasks{}
+
+			// Create a temporary file with the mock JSON data
+			mockData := ""
+			switch tt.file {
+			case "valid_tasks.json":
+				mockData = `[{"id": 1, "description": "Do laundry", "status": "pending", "created_at": "2025-05-11", "updated_at": "2025-05-11"}, {"id": 2, "description": "Buy groceries", "status": "done", "created_at": "2025-05-10", "updated_at": "2025-05-10"}]`
+			case "invalid_json.json":
+				mockData = `[{"id": 1, "description": "Do laundry", "status": "pending", "created_at": "2025-05-11", "updated_at": "2025-05-11",}` // Invalid trailing comma
+			case "empty_file.json":
+				mockData = `[]`
+			default:
+				t.Fatalf("Unexpected file: %v", tt.file)
+			}
+
+			// Create a temporary file with the mock data
+			tmpFile, err := os.CreateTemp("", "test_*.json")
+			if err != nil {
+				t.Fatal("Unable to create temporary file:", err)
+			}
+			defer os.Remove(tmpFile.Name()) // Clean up the temp file after test
+
+			// Write mock data to the temp file
+			if _, err := tmpFile.Write([]byte(mockData)); err != nil {
+				t.Fatal("Failed to write mock data:", err)
+			}
+			tmpFile.Close()
+
+			// Load tasks from the file
+			err = tasks.LoadFromJSONFile(tmpFile.Name())
+
+			// Check if we expect an error
+			if (err != nil) != tt.wantError {
+				t.Errorf("Expected error: %v, got: %v", tt.wantError, err != nil)
+			}
+
+			// Check if the number of tasks is correct
+			if len(tasks) != tt.wantTasks {
+				t.Errorf("Expected %d tasks, got %d", tt.wantTasks, len(tasks))
+			}
+		})
+	}
+}

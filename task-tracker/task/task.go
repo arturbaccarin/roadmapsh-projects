@@ -1,7 +1,10 @@
 package task
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"os"
 	"time"
 )
 
@@ -52,6 +55,31 @@ func (t Tasks) ListByStatus(status status) {
 			fmt.Printf("%s\n", task)
 		}
 	}
+}
+
+func (t Tasks) LoadFromJSONFile(filename string) error {
+	file, err := os.Open(filename)
+	if err != nil {
+		return fmt.Errorf("failed to open file: %v", err)
+	}
+	defer file.Close()
+
+	bytes, err := io.ReadAll(file)
+	if err != nil {
+		return fmt.Errorf("failed to read file: %v", err)
+	}
+
+	var tasks []Task
+	err = json.Unmarshal(bytes, &tasks)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal JSON: %v", err)
+	}
+
+	for _, task := range tasks {
+		t.Add(&task)
+	}
+
+	return nil
 }
 
 type Task struct {
