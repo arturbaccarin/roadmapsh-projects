@@ -232,8 +232,12 @@ func TestLoadFromJSONFile(t *testing.T) {
 				mockData = `[{"id": 1, "description": "Do laundry", "status": "pending", "created_at": "2025-05-11", "updated_at": "2025-05-11",}` // Invalid trailing comma
 			case "empty_file.json":
 				mockData = `[]`
-			default:
-				t.Fatalf("Unexpected file: %v", tt.file)
+			case "nonexistent_file.json":
+				err := tasks.LoadFromJSONFile(tt.file)
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
 			}
 
 			// Create a temporary file with the mock data
