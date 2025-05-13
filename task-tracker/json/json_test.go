@@ -105,3 +105,20 @@ func TestUpdateFile(t *testing.T) {
 		}
 	})
 }
+
+func TestFileExists(t *testing.T) {
+	tmpFile, err := os.Create("testfile.json")
+	if err != nil {
+		t.Fatalf("Failed to create temp file: %v", err)
+	}
+	defer os.Remove(tmpFile.Name()) // Clean up
+
+	if !FileExists(tmpFile.Name()) {
+		t.Errorf("Expected file to exist: %s", tmpFile.Name())
+	}
+
+	nonExistent := tmpFile.Name() + "_doesnotexist"
+	if FileExists(nonExistent) {
+		t.Errorf("Expected file NOT to exist: %s", nonExistent)
+	}
+}

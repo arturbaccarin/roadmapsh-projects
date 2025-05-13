@@ -35,6 +35,11 @@ func UpdateFile(filename string, data []byte) error {
 	return nil
 }
 
+func FileExists(filename string) bool {
+	_, err := os.Stat(filename)
+	return !os.IsNotExist(err)
+}
+
 func verifyJSONExtension(filename string) string {
 	if !strings.HasSuffix(filename, ".json") {
 		return filename + ".json"

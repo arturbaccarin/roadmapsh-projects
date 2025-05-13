@@ -3,11 +3,19 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
+	"tasktracker/json"
 )
 
 func main() {
+	filename := "tasks.json"
+	err := json.CreateFile(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
