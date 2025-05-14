@@ -40,6 +40,12 @@ func FileExists(filename string) bool {
 	return !os.IsNotExist(err)
 }
 
+func LoadFile(filename string) ([]byte, error) {
+	filename = verifyJSONExtension(filename)
+
+	return os.ReadFile(filename)
+}
+
 func verifyJSONExtension(filename string) string {
 	if !strings.HasSuffix(filename, ".json") {
 		return filename + ".json"

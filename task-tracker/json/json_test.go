@@ -1,6 +1,7 @@
 package json
 
 import (
+	"bytes"
 	"io"
 	"os"
 	"testing"
@@ -121,4 +122,41 @@ func TestFileExists(t *testing.T) {
 	if FileExists(nonExistent) {
 		t.Errorf("Expected file NOT to exist: %s", nonExistent)
 	}
+}
+
+func TestLoadFile(t *testing.T) {
+	t.Run("Valid file", func(t *testing.T) {
+		tempFile, err := os.Create("testfile.json")
+		if err != nil {
+			t.Fatalf("Failed to create temp file: %v", err)
+		}
+		defer os.Remove(tempFile.Name())
+
+		// Write some data to the file
+		_, err = tempFile.Write([]byte("Hello, World!"))
+		if err != nil {
+			t.Fatalf("Failed to write to temp file: %v", err)
+		}
+		defer tempFile.Close()
+
+		// Load the file
+		data, err := LoadFile(tempFile.Name())
+		if err != nil {
+			t.Fatalf("Failed to load file: %v", err)
+		}
+
+		// Check the loaded data
+		expectedData := []byte("Hello, World!")
+		if !bytes.Equal(data, expectedData) {
+			t.Errorf("Expected data '%s', got '%s'", expectedData, data)
+		}
+
+	})
+
+	t.Run("File Not Found", func(t *testing.T) {
+		_, err := LoadFile("nonexistent_file.json")
+		if err == nil {
+			t.Errorf("Expected error for non-existent file, got nil")
+		}
+	})
 }
