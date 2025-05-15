@@ -18,6 +18,10 @@ const (
 
 type Tasks map[int]Task
 
+func NewTasks() Tasks {
+	return Tasks{}
+}
+
 func (t Tasks) Add(task *Task) {
 	task.ID = len(t) + 1
 	task.CreatedAt = time.Now().String()

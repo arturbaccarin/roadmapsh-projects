@@ -7,13 +7,23 @@ import (
 	"os"
 	"strings"
 	"tasktracker/json"
+	"tasktracker/task"
 )
 
 func main() {
 	filename := "tasks.json"
-	err := json.CreateFile(filename)
-	if err != nil {
-		log.Fatal(err)
+	tasks := task.NewTasks()
+
+	if !json.FileExists(filename) {
+		err := json.CreateFile(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		err := tasks.LoadFromJSONFile(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	reader := bufio.NewReader(os.Stdin)
