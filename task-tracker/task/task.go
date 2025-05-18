@@ -86,6 +86,15 @@ func (t Tasks) LoadFromJSONFile(filename string) error {
 	return nil
 }
 
+func (t Tasks) ToJSON() ([]byte, error) {
+	bytes, err := json.Marshal(t)
+	if err != nil {
+		return nil, err
+	}
+
+	return bytes, nil
+}
+
 type Task struct {
 	ID          int
 	Description string
