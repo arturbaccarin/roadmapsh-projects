@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"tasktracker/cli"
 	"tasktracker/json"
 	"tasktracker/task"
 )
@@ -36,20 +37,11 @@ func main() {
 			continue
 		}
 
-		// Clean input
-		command := strings.TrimSpace(input)
+		args := strings.TrimSpace(input)
 
-		// Handle commands
-		switch command {
-		case "exit", "quit":
-			fmt.Println("Exiting CLI...")
-			return
-		case "hello":
-			fmt.Println("Hi there!")
-		case "":
-			// Ignore empty input
-		default:
-			fmt.Printf("Unknown command: %s\n", command)
+		err = cli.Execute(strings.Split(args, " ")...)
+		if err != nil {
+			fmt.Println("Error:", err)
 		}
 	}
 }
