@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"tasktracker/config"
 	"tasktracker/json"
@@ -20,6 +21,9 @@ func Execute(args ...string) error {
 
 	case "list":
 		listAll(args[1:]...)
+
+	case "exit":
+		os.Exit(0)
 	}
 
 	return nil
