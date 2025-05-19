@@ -87,7 +87,12 @@ func (t Tasks) LoadFromJSONFile(filename string) error {
 }
 
 func (t Tasks) ToJSON() ([]byte, error) {
-	bytes, err := json.Marshal(t)
+	tasks := make([]Task, 0, len(t))
+	for _, task := range t {
+		tasks = append(tasks, task)
+	}
+
+	bytes, err := json.Marshal(tasks)
 	if err != nil {
 		return nil, err
 	}
