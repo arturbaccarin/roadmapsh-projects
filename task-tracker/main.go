@@ -7,13 +7,21 @@ import (
 	"os"
 	"strings"
 	"tasktracker/cli"
+	"tasktracker/config"
 	"tasktracker/json"
-	"tasktracker/task"
 )
+
+/*
+TODO
+
+validate empty description
+implement sort by ID
+implement unit tests
+fix updatedBy
+*/
 
 func main() {
 	filename := "tasks.json"
-	tasks := task.NewTasks()
 
 	if !json.FileExists(filename) {
 		err := json.CreateFile(filename)
@@ -21,7 +29,7 @@ func main() {
 			log.Fatal(err)
 		}
 	} else {
-		err := tasks.LoadFromJSONFile(filename)
+		err := config.Tasks.LoadFromJSONFile(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
