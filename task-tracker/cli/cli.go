@@ -23,6 +23,9 @@ func Execute(args ...string) error {
 	case "update":
 		update(args[1:]...)
 
+	case "remove":
+		remove(args[1:]...)
+
 	case "list":
 		listAll(args[1:]...)
 
@@ -33,23 +36,56 @@ func Execute(args ...string) error {
 	return nil
 }
 
-func add(args ...string) error {
+func add(args ...string) {
+	valid := validateNumberOfArguments(1, args...)
+	if !valid {
+		return
+	}
+
 	description := strings.Join(args, " ")
 
 	task := task.NewTask(description)
 	config.Tasks.Add(&task)
 
-	data, err := config.Tasks.ToJSON()
-	if err != nil {
-		return err
+	updateFile()
+}
+
+func update(args ...string) {
+	valid := validateNumberOfArguments(2, args...)
+	if !valid {
+		return
 	}
 
-	err = json.UpdateFile(config.Filename, data)
-	if err != nil {
-		return err
+	id, valid := parseID(args[0])
+	if !valid {
+		return
 	}
 
-	return nil
+	description := strings.Join(args[1:], " ")
+
+	err := config.Tasks.Update(id, description)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	updateFile()
+}
+
+func remove(args ...string) {
+	valid := validateNumberOfArguments(1, args...)
+	if !valid {
+		return
+	}
+
+	id, valid := parseID(args[0])
+	if !valid {
+		return
+	}
+
+	config.Tasks.Remove(id)
+
+	updateFile()
 }
 
 func listAll(args ...string) {
@@ -72,42 +108,6 @@ func listAll(args ...string) {
 	}
 }
 
-func update(args ...string) {
-	if len(args) < 2 {
-		fmt.Println("Not enough arguments provided")
-		return
-	}
-
-	id, err := strconv.Atoi(args[0])
-	if err != nil {
-		fmt.Println("Invalid ID provided")
-		return
-	}
-
-	description := strings.Join(args[1:], " ")
-	err = config.Tasks.Update(id, description)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-}
-
-func remove(args ...string) {
-	if len(args) < 1 {
-		fmt.Println("Not enough arguments provided")
-		return
-	}
-
-	id, err := strconv.Atoi(args[0])
-	if err != nil {
-		fmt.Println("Invalid ID provided")
-		return
-	}
-
-	config.Tasks.Remove(id)
-}
-
 func validateNumberOfArguments(n int, args ...string) bool {
 	if len(args) < n {
 		fmt.Println("Not enough arguments provided")
@@ -125,4 +125,18 @@ func parseID(id string) (int, bool) {
 	}
 
 	return intID, true
+}
+
+func updateFile() {
+	data, err := config.Tasks.ToJSON()
+	if err != nil {
+		fmt.Printf("Error marshaling JSON: %v\n", err)
+		return
+	}
+
+	err = json.UpdateFile(config.Filename, data)
+	if err != nil {
+		fmt.Printf("Error updating file: %v\n", err)
+		return
+	}
 }
