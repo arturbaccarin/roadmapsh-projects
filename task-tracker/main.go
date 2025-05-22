@@ -13,10 +13,7 @@ import (
 
 /*
 TODO
-
-validate empty description
 implement sort by ID
-implement unit tests
 fix updatedBy
 */
 
