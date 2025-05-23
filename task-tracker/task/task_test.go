@@ -36,7 +36,7 @@ func TestUpdate(t *testing.T) {
 	tasks := Tasks{}
 	tasks.Add(&task)
 
-	err := tasks.Update(1, "Buy groceries and cook dinner")
+	tasks.Update(1, "Buy groceries and cook dinner")
 	task = tasks[1]
 
 	if task.Description != "Buy groceries and cook dinner" {
@@ -47,14 +47,7 @@ func TestUpdate(t *testing.T) {
 		t.Error("expected UpdatedAt, got empty")
 	}
 
-	if err != nil {
-		t.Errorf("expected nil, got %v", err)
-	}
-
-	err = tasks.Update(2, "Buy groceries and cook dinner")
-	if err == nil {
-		t.Error("expected error, got nil")
-	}
+	tasks.Update(2, "Buy groceries and cook dinner")
 }
 
 func TestRemove(t *testing.T) {

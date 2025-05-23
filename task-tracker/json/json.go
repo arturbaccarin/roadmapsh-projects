@@ -21,13 +21,7 @@ func CreateFile(filename string) error {
 func UpdateFile(filename string, data []byte) error {
 	filename = verifyJSONExtension(filename)
 
-	file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return fmt.Errorf("failed to open file: %v", err)
-	}
-	defer file.Close()
-
-	_, err = file.Write(data)
+	err := os.WriteFile(filename, data, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write to file: %v", err)
 	}
