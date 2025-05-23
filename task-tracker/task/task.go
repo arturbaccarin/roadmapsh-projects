@@ -29,21 +29,26 @@ func (t Tasks) Add(task *Task) {
 	t[task.ID] = *task
 }
 
-func (t Tasks) Update(id int, description string) error {
+func (t Tasks) Update(id int, description string) {
 	task, ok := t[id]
 	if !ok {
-		return fmt.Errorf("task with ID %d not found", id)
+		fmt.Printf("task with ID %d not found", id)
+		return
 	}
 
 	task.Description = description
 	task.UpdatedAt = time.Now().String()
 
 	t[id] = task
-
-	return nil
 }
 
 func (t Tasks) Remove(id int) {
+	_, ok := t[id]
+	if !ok {
+		fmt.Printf("task with ID %d not found", id)
+		return
+	}
+
 	delete(t, id)
 }
 
@@ -87,7 +92,7 @@ func (t Tasks) LoadFromJSONFile(filename string) error {
 }
 
 func (t Tasks) ToJSON() ([]byte, error) {
-	tasks := make([]Task, 0, len(t))
+	var tasks []Task
 	for _, task := range t {
 		tasks = append(tasks, task)
 	}

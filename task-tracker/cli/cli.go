@@ -63,11 +63,7 @@ func update(args ...string) {
 
 	description := strings.Join(args[1:], " ")
 
-	err := config.Tasks.Update(id, description)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	config.Tasks.Update(id, description)
 
 	updateFile()
 }
