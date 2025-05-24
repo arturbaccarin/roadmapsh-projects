@@ -11,12 +11,6 @@ import (
 	"tasktracker/json"
 )
 
-/*
-TODO
-implement sort by ID
-fix updatedBy
-*/
-
 func main() {
 	filename := "tasks.json"
 
