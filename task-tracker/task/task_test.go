@@ -2,6 +2,7 @@ package task
 
 import (
 	"bytes"
+	"encoding/json"
 	"io"
 	"os"
 	"testing"
@@ -259,5 +260,40 @@ func TestLoadFromJSONFile(t *testing.T) {
 				t.Errorf("Expected %d tasks, got %d", tt.wantTasks, len(tasks))
 			}
 		})
+	}
+}
+
+func TestToJSON(t *testing.T) {
+	tasks := Tasks{
+		1: {
+			ID:          1,
+			Description: "Task 1",
+			Status:      Open,
+		},
+		2: {
+			ID:          2,
+			Description: "Task 2",
+			Status:      Done,
+		},
+	}
+
+	ts := []Task{
+		{
+			ID:          1,
+			Description: "Task 1",
+			Status:      Open,
+		},
+		{
+			ID:          2,
+			Description: "Task 2",
+			Status:      Done,
+		},
+	}
+
+	expected, _ := json.Marshal(ts)
+	actual, _ := tasks.ToJSON()
+
+	if !bytes.Equal(expected, actual) {
+		t.Errorf("Expected JSON: %s, got: %s", expected, actual)
 	}
 }
