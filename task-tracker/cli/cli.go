@@ -29,6 +29,9 @@ func Execute(args ...string) error {
 	case "list":
 		listAll(args[1:]...)
 
+	case "status":
+		changeStatus(args[1:]...)
+
 	case "exit":
 		os.Exit(0)
 	}
@@ -102,6 +105,40 @@ func listAll(args ...string) {
 	default:
 		fmt.Println("Invalid status provided")
 	}
+}
+
+func changeStatus(args ...string) {
+	valid := validateNumberOfArguments(1, args...)
+	if !valid {
+		return
+	}
+
+	id, valid := parseID(args[0])
+	if !valid {
+		return
+	}
+
+	status := args[1]
+
+	t, ok := config.Tasks[id]
+	if !ok {
+		fmt.Println("Task with the provided ID doesn't exist")
+		return
+	}
+
+	switch status {
+	case "open":
+		t.MarkAsOpen()
+	case "in_progress":
+		t.MarkAsInProgress()
+	case "done":
+		t.MarkAsDone()
+	default:
+		fmt.Println("Invalid status provided")
+	}
+
+	config.Tasks[id] = t
+	updateFile()
 }
 
 func validateNumberOfArguments(n int, args ...string) bool {
