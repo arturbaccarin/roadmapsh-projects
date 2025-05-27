@@ -11,8 +11,6 @@ import (
 	"tasktracker/json"
 )
 
-// Today is my birthday, so this is the commit of the day
-
 func main() {
 	filename := "tasks.json"
 
