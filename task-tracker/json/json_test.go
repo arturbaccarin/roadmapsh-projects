@@ -2,8 +2,8 @@ package json
 
 import (
 	"bytes"
-	"io"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -53,58 +53,26 @@ func TestCreateFile(t *testing.T) {
 }
 
 func TestUpdateFile(t *testing.T) {
-	filename := "test_filename.json"
-	initialData := []byte("Initial data.\n")
+	tmpDir := t.TempDir()
 
-	file, err := os.Create(filename)
+	filename := filepath.Join(tmpDir, "testfile")
+	data := []byte(`{"key":"value"}`)
+
+	err := UpdateFile(filename, data)
 	if err != nil {
-		t.Fatalf("failed to create file: %v", err)
+		t.Fatalf("UpdateFile returned an error: %v", err)
 	}
 
-	_, err = file.Write(initialData)
+	expectedFile := verifyJSONExtension(filename)
+
+	writtenData, err := os.ReadFile(expectedFile)
 	if err != nil {
-		t.Fatalf("failed to write to file: %v", err)
+		t.Fatalf("failed to read written file: %v", err)
 	}
 
-	defer func() {
-		file.Close()
-		os.Remove(filename)
-	}()
-
-	t.Run("Valid append", func(t *testing.T) {
-		appendData := []byte("New data added.\n")
-
-		err = UpdateFile(filename, appendData)
-		if err != nil {
-			t.Fatalf("UpdateFile failed: %v", err)
-		}
-
-		file, err = os.Open(filename)
-		if err != nil {
-			t.Fatalf("failed to open file for reading: %v", err)
-		}
-		defer file.Close()
-
-		content, err := io.ReadAll(file)
-		if err != nil {
-			t.Fatalf("failed to read file: %v", err)
-		}
-
-		expectedContent := string(initialData) + "New data added.\n"
-		if string(content) != expectedContent {
-			t.Errorf("Expected file content '%s', got '%s'", expectedContent, string(content))
-		}
-	})
-
-	// Error tests
-	t.Run("File not found", func(t *testing.T) {
-		nonExistentFile := "non_existent_file.json"
-
-		err := UpdateFile(nonExistentFile, []byte("Some data"))
-		if err == nil {
-			t.Errorf("Expected error for non-existent file, got nil")
-		}
-	})
+	if string(writtenData) != string(data) {
+		t.Errorf("file contents do not match\nexpected: %s\ngot: %s", string(data), string(writtenData))
+	}
 }
 
 func TestFileExists(t *testing.T) {

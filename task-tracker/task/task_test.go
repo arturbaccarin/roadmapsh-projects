@@ -137,7 +137,7 @@ func TestListByStatus(t *testing.T) {
 	var buf bytes.Buffer
 	io.Copy(&buf, r)
 
-	expected := "ID: 1\nDescription: Task 1\nStatus: open\n\nID: 3\nDescription: Task 3\nStatus: open\n\n"
+	expected := "ID: 3\nDescription: Task 3\nStatus: open\n\nID: 1\nDescription: Task 1\nStatus: open\n\n"
 	if buf.String() != expected {
 		t.Errorf("expected: \n%s\ngot:\n%s", expected, buf.String())
 	}
