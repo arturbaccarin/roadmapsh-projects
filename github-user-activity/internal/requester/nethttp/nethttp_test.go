@@ -16,7 +16,7 @@ func TestNetHTTP_Get(t *testing.T) {
 			t.Errorf("Expected Authorization header 'Bearer testtoken', got '%s'", r.Header.Get("Authorization"))
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"message":"ok"}`))
+		w.Write([]byte("ok"))
 	})
 	testServer := httptest.NewServer(handler)
 	defer testServer.Close()

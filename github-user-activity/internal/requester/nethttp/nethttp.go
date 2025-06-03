@@ -32,7 +32,5 @@ func (n *NetHTTP) Get(url string, header map[string]string) (*http.Response, err
 		return nil, err
 	}
 
-	defer resp.Body.Close()
-
 	return resp, nil
 }
