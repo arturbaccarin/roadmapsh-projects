@@ -10,11 +10,8 @@ var (
 	githubToken string
 )
 
-func init() {
-	err := godotenv.Load()
-	if err != nil {
-		panic(err)
-	}
+func LoadEnvs() error {
+	return godotenv.Load()
 }
 
 func GetGitHubToken() string {
