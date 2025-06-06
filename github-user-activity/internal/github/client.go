@@ -36,7 +36,7 @@ func (c *Client) GetListEventsUser(username string) ([]UserEvent, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("error getting user events: %s", resp.Status)
+		return nil, fmt.Errorf("error getting user events: %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)

@@ -2,7 +2,9 @@ package github
 
 import (
 	"errors"
+	"io"
 	"net/http"
+	"strings"
 	"testing"
 )
 
@@ -27,6 +29,17 @@ func TestGetListEventsUser(t *testing.T) {
 		_, err := client.GetListEventsUser("test")
 		if err == nil {
 			t.Fatalf("Expected error, got nil")
+		}
+	})
+
+	t.Run("if requester returns status code != 200 then return error getting user events and status", func(t *testing.T) {
+		client := NewMockClient(func(url string, headers map[string]string) (*http.Response, error) {
+			return &http.Response{StatusCode: 500, Body: io.NopCloser(strings.NewReader("error content"))}, nil
+		})
+
+		_, err := client.GetListEventsUser("test")
+		if err.Error() != "error getting user events: 500" {
+			t.Fatalf("Expected error getting user events: 500, got %s", err.Error())
 		}
 	})
 }
