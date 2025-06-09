@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"githubuseractivity/config"
+	"githubuseractivity/internal/github/dto"
 	"githubuseractivity/internal/requester"
 	"io"
 )
@@ -22,7 +23,7 @@ func NewClient(requester requester.Requester) *Client {
 	}
 }
 
-func (c *Client) GetListEventsUser(username string) ([]UserEvent, error) {
+func (c *Client) GetListEventsUser(username string) ([]dto.UserEvent, error) {
 	url := fmt.Sprintf("%s/users/%s/events", hostname, username)
 
 	header := map[string]string{
@@ -49,5 +50,19 @@ func (c *Client) GetListEventsUser(username string) ([]UserEvent, error) {
 		return nil, fmt.Errorf("error unmarshalling response body: %w", err)
 	}
 
-	return events, nil
+	if len(events) == 0 {
+		return nil, fmt.Errorf("no events found for user %s", username)
+	}
+
+	dtoEvents := make([]dto.UserEvent, len(events))
+	for i, event := range events {
+		dtoEvents[i] = dto.UserEvent{
+			Type: event.Type,
+			Repo: dto.Repo{
+				Name: event.Repo.Name,
+			},
+		}
+	}
+
+	return dtoEvents, nil
 }
